@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>贪吃蛇</title>
+  <style media="screen">
+    #canvas {
+      background-color: #454545;
+      display:block;
+      margin: 0 auto;
+    }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <canvas id="canvas" width="1200" height="1000"></canvas>
+  </div>
+
+  <script type="text/javascript">
+    let huabu = document.getElementById("canvas");
+    let tools = huabu.getContext("2d");
+    let x = Math.floor(Math.random() * 30) * 40;
+    let y = Math.floor(Math.random() * 25) * 40;
+    let isEated = false;
+    let snake = [{x: 3, y: 0}, {x: 2, y: 0}, {x: 1, y: 0}, {x: 0, y: 0}];
+    let dirctionX = 0;
+    let dirctionY = 0;
+    let GameOver;
+
+    document.addEventListener('keydown', function(e){
+
+      // switch(e.keyCode){
+      //   case 37:
+      //   case 38:
+      //   case 39:
+      //   case 40:
+      // }
+      if(e.keyCode == 38){
+        dirctionX = 0;
+        dirctionY = -1;
+      } else if(e.keyCode == 40){
+        dirctionX = 0;
+        dirctionY = 1;
+      } else if(e.keyCode == 37){
+        dirctionX = -1;
+        dirctionY = 0;
+      } else if(e.keyCode == 39){
+        dirctionX = 1;
+        dirctionY = 0;
+      }
+    });
+
+    setInterval(function(){
+      if(GameOver){
+        return;
+      };
+
+      tools.clearRect(0, 0, 1200, 1000);
+
+      if(isEated){
+        x = Math.floor(Math.random() * 30) * 40;
+        y = Math.floor(Math.random() * 25) * 40;
+      };
+
+      tools.fillStyle = "#EE2C2C";
+      tools.fillRect(x, y, 40, 40);
+
+      let oldhead = snake[0];
+      let newhead = {
+        x: oldhead.x + dirctionX,
+        y: oldhead.y + dirctionY
+      };
+      if(newhead.x < 0 || newhead.y < 0 || newhead.x * 40 >= 1200 || newhead.y * 40 >= 1000){
+        GameOver = true;
+      } else {
+        snake.unshift(newhead);
+
+        if(snake[0].x * 40 == x && snake[0].y * 40 == y){
+          isEated = true;
+        } else {
+          snake.pop();
+          isEated = false;
+        };
+      };
+
+      for(let i = 0; i < snake.length; i++){
+        if(i == 0){
+          tools.fillStyle = "#7B68EE";
+        } else {
+          tools.fillStyle = "#AB82FF";
+        }
+        tools.fillRect(snake[i].x * 40, snake[i].y * 40, 40, 40);
+      }
+
+      for(let i = 1; i < 25; i++){
+        tools.moveTo(0, 40 * i + 0.5);
+        tools.lineTo(1200, 40 * i + 0.5);
+      }
+      for(let i = 1; i < 30; i++){
+        tools.moveTo(40 * i + 0.5, 0);
+        tools.lineTo(40 * i + 0.5, 1000);
+      }
+      tools.strokeStyle = "#EEC900";
+      tools.stroke();
+    },1000 / 20);
+
+  </script>
+</body>
+</html>
